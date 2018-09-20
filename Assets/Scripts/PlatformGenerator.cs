@@ -44,14 +44,17 @@ public class PlatformGenerator : MonoBehaviour {
             // Add platform width and distance between to X coordinate
             platformSelector = Random.Range(0, objectPools.Length);
 
-            transform.position = new Vector3 (transform.position.x + platformWidths[platformSelector] + distanceBetween, transform.position.y, transform.position.z);
+            transform.position = new Vector3 (transform.position.x + (platformWidths[platformSelector] / 2) + distanceBetween, transform.position.y, transform.position.z);
 
              //Instantiate(platform, transform.position, transform.rotation);
              GameObject newPlatform = objectPools[platformSelector].GetPooledObject();
 
              newPlatform.transform.position = transform.position;
              newPlatform.transform.rotation = transform.rotation;
-             newPlatform.SetActive(true); 
+             newPlatform.SetActive(true);
+
+            transform.position = new Vector3(transform.position.x + (platformWidths[platformSelector] / 2), transform.position.y, transform.position.z);
+
         }
-	}
+    }
 }

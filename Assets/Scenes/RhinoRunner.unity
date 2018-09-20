@@ -639,7 +639,7 @@ MonoBehaviour:
   generationPoint: {fileID: 1438246303}
   distanceBetween: 500000
   distanceBetweenMin: 1
-  distanceBetweenMax: 5
+  distanceBetweenMax: 8
   objectPool: {fileID: 1585610010}
   objectPools:
   - {fileID: 1585610010}
