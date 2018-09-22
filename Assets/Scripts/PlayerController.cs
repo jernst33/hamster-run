@@ -5,40 +5,66 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     public float moveSpeed;
+    public float speedMultiplier;
+    public float speedIncreaseMilestone;
+    private float passedMilestoneCount;
+
+    private float moveSpeedStore;
+    private float passedMilestoneCountStore;
+    private float speedIncreaseMilestoneStore;
+
     public float jumpForce;
 
     public float jumpDuration;
     public float jumpDurationCounter;
+    private bool stoppedJumping;
 
     private Rigidbody2D myRigidbody;
 
     public bool grounded;
     public LayerMask whatIsGround;
-
-    private Collider2D myCollider;
+    public Transform groundCheck;
+    public float groundCheckRadius;
+    //private Collider2D myCollider;
 
     private Animator myAnimator;
+
+    public GameManager gameManager;
 
 	void Start () {
 
         myRigidbody = GetComponent<Rigidbody2D>();
-        myCollider = GetComponent<Collider2D>();
+       // myCollider = GetComponent<Collider2D>();
         myAnimator = GetComponent<Animator>();
         jumpDurationCounter = jumpDuration;
+        passedMilestoneCount = speedIncreaseMilestone;
+        moveSpeedStore = moveSpeed;
+        passedMilestoneCountStore = passedMilestoneCount;
+        speedIncreaseMilestoneStore = speedIncreaseMilestone;
+        stoppedJumping = true;
 	}
 	
 	void Update () {
 
+        // grounded = Physics2D.IsTouchingLayers(myCollider, whatIsGround);
+        grounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
+        if(transform.position.x > passedMilestoneCount)
+        {
+            passedMilestoneCount += speedIncreaseMilestone;
+            speedIncreaseMilestone = speedIncreaseMilestone * speedMultiplier;
+            moveSpeed *= speedMultiplier;
+        }
+
         myRigidbody.velocity = new Vector2(moveSpeed, myRigidbody.velocity.y);
-        grounded = Physics2D.IsTouchingLayers(myCollider, whatIsGround);
 
         // Player wants to JUMP!
         if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && grounded)
         {
             myRigidbody.velocity = new Vector2(myRigidbody.velocity.x, jumpForce);
+            
         }
 
-        if(Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0))
+        if((Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)) && !stoppedJumping)
         {
             if(jumpDurationCounter > 0)
             {
@@ -47,7 +73,31 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
+        if(Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonUp(0))
+        {
+            jumpDurationCounter = 0;
+            stoppedJumping = true;
+        }
+
+        if(grounded)
+        {
+            jumpDurationCounter = jumpDuration;
+            stoppedJumping = false;
+        }
+
         myAnimator.SetFloat("Speed", myRigidbody.velocity.x);
         myAnimator.SetBool("Grounded", grounded);
 	}
+
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if(other.gameObject.tag == "killbox")
+        {
+            gameManager.RestartGame();
+            moveSpeed = moveSpeedStore;
+            passedMilestoneCount = passedMilestoneCountStore;
+            speedIncreaseMilestone = speedIncreaseMilestoneStore;
+
+        }
+    }
 }
