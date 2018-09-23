@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour {
     public float jumpDuration;
     public float jumpDurationCounter;
     private bool stoppedJumping;
+    private bool canDoubleJump;
 
     private Rigidbody2D myRigidbody;
 
@@ -25,6 +26,7 @@ public class PlayerController : MonoBehaviour {
     public LayerMask whatIsGround;
     public Transform groundCheck;
     public float groundCheckRadius;
+
     //private Collider2D myCollider;
 
     private Animator myAnimator;
@@ -42,6 +44,7 @@ public class PlayerController : MonoBehaviour {
         passedMilestoneCountStore = passedMilestoneCount;
         speedIncreaseMilestoneStore = speedIncreaseMilestone;
         stoppedJumping = true;
+        canDoubleJump = true;
 	}
 	
 	void Update () {
@@ -58,10 +61,21 @@ public class PlayerController : MonoBehaviour {
         myRigidbody.velocity = new Vector2(moveSpeed, myRigidbody.velocity.y);
 
         // Player wants to JUMP!
-        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && grounded)
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
         {
-            myRigidbody.velocity = new Vector2(myRigidbody.velocity.x, jumpForce);
-            
+            if (grounded)
+            {
+                myRigidbody.velocity = new Vector2(myRigidbody.velocity.x, jumpForce);
+                stoppedJumping = false;
+            }
+
+            if (!grounded && canDoubleJump)
+            {
+                myRigidbody.velocity = new Vector2(myRigidbody.velocity.x, jumpForce);
+                jumpDurationCounter = jumpDuration;
+                canDoubleJump = false;
+                stoppedJumping = false;
+            }
         }
 
         if((Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0)) && !stoppedJumping)
@@ -82,7 +96,7 @@ public class PlayerController : MonoBehaviour {
         if(grounded)
         {
             jumpDurationCounter = jumpDuration;
-            stoppedJumping = false;
+            canDoubleJump = true;
         }
 
         myAnimator.SetFloat("Speed", myRigidbody.velocity.x);
