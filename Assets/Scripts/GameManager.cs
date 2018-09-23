@@ -14,11 +14,14 @@ public class GameManager : MonoBehaviour {
 
     private ScoreManager scoreManager;
 
+    public DeathMenu deathScreen;
+
 	void Start () {
 
         platformStartPoint = platformGenerator.position;
         playerStartPoint = thePlayer.transform.position;
         scoreManager = FindObjectOfType<ScoreManager>();
+//        deathScreen.gameObject.SetActive(false);
 	}
 	
 	void Update () {
@@ -27,10 +30,33 @@ public class GameManager : MonoBehaviour {
 
     public void RestartGame()
     {
-        StartCoroutine("RestartGameCo");
+        // StartCoroutine("RestartGameCo");
+        scoreManager.isAlive = false;
+        thePlayer.gameObject.SetActive(false);
+        deathScreen.gameObject.SetActive(true);
+
     }
 
-    public IEnumerator RestartGameCo()
+    public void Reset()
+    {
+        platformList = FindObjectsOfType<PlatformDestructor>();
+
+        for (int i = 0; i < platformList.Length; i++)
+        {
+            platformList[i].gameObject.SetActive(false);
+        }
+
+        thePlayer.transform.position = playerStartPoint;
+        platformGenerator.position = platformStartPoint;
+        thePlayer.gameObject.SetActive(true);
+
+        scoreManager.scoreTracker = 0;
+        scoreManager.isAlive = true;
+        deathScreen.gameObject.SetActive(false);
+
+    }
+
+    /* public IEnumerator RestartGameCo()
     {
         scoreManager.isAlive = false;
         thePlayer.gameObject.SetActive(false);
@@ -49,5 +75,5 @@ public class GameManager : MonoBehaviour {
 
         scoreManager.scoreTracker = 0;
         scoreManager.isAlive = true;
-    }
+    } */
 }
