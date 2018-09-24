@@ -27,6 +27,9 @@ public class PlayerController : MonoBehaviour {
     public Transform groundCheck;
     public float groundCheckRadius;
 
+    public AudioSource jumpSound;
+    public AudioSource deathSound;
+
     //private Collider2D myCollider;
 
     private Animator myAnimator;
@@ -67,6 +70,7 @@ public class PlayerController : MonoBehaviour {
             {
                 myRigidbody.velocity = new Vector2(myRigidbody.velocity.x, jumpForce);
                 stoppedJumping = false;
+                jumpSound.Play();
             }
 
             if (!grounded && canDoubleJump)
@@ -75,6 +79,8 @@ public class PlayerController : MonoBehaviour {
                 jumpDurationCounter = jumpDuration;
                 canDoubleJump = false;
                 stoppedJumping = false;
+                jumpSound.Play();
+
             }
         }
 
@@ -111,6 +117,7 @@ public class PlayerController : MonoBehaviour {
             moveSpeed = moveSpeedStore;
             passedMilestoneCount = passedMilestoneCountStore;
             speedIncreaseMilestone = speedIncreaseMilestoneStore;
+            deathSound.Play();
 
         }
     }

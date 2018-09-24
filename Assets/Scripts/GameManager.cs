@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour {
     private ScoreManager scoreManager;
 
     public DeathMenu deathScreen;
+    public GameObject pauseButton;
 
 	void Start () {
 
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour {
         // StartCoroutine("RestartGameCo");
         scoreManager.isAlive = false;
         thePlayer.gameObject.SetActive(false);
+        pauseButton.SetActive(false);
         deathScreen.gameObject.SetActive(true);
 
     }
@@ -52,6 +54,7 @@ public class GameManager : MonoBehaviour {
 
         scoreManager.scoreTracker = 0;
         scoreManager.isAlive = true;
+        pauseButton.SetActive(true);
         deathScreen.gameObject.SetActive(false);
 
     }
